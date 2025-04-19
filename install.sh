@@ -46,12 +46,12 @@ chown -R www-data:www-data /home/vmess/public_html
 systemctl restart nginx
 
 bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install
-
-read -rp "Name : " serverName
+clear
+read -rp "Server Name : " serverName
 echo $serverName > /usr/local/etc/xray/name
 read -rp "Domain : " serverDomain
 echo $serverDomain > /usr/local/etc/xray/domain
-echo "185.139.7.201" >> /usr/local/etc/xray/ip
+echo $serverIP >> /usr/local/etc/xray/ip
 
 mkdir /root/.acme.sh
 curl ${scriptURL}/acme.sh -o /root/.acme.sh/acme.sh
