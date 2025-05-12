@@ -61,28 +61,16 @@ def handle_new_messages():
 
 		if command_input.startswith("buat "):
 			userId = uuid.uuid4()
-			totalUser = subprocess.run(['bot-total-user'], capture_output=True, text=True)
-			sshServer2 = spur.SshShell(hostname=os.getenv('IPS2'), username=os.getenv('USERS2'), password=os.getenv('PASSS2'))
-
-			if int(totalUser.stdout) % 2 == 0:
-				userData = subprocess.run(['bot-add-user',command_input[8:].title().replace(" ",""),str(userId)], capture_output=True, text=True)
-				sshServer2.run(["bot-add-user",command_input[8:].title().replace(" ",""),str(userId)])
-				sender['body'] = userData.stdout
-				endpoint = 'messages/text'
-			else:
-				userData = sshServer2.run(["bot-add-user",command_input[8:].title().replace(" ",""),str(userId)])
-				subprocess.run(['bot-add-user',command_input[8:].title().replace(" ",""),str(userId)], capture_output=True, text=True)
-				sender['body'] = userData.output.decode("utf-8")
-				endpoint = 'messages/text'
+			
+			userData = subprocess.run(['bot-add-user',command_input[8:].title().replace(" ",""),str(userId)], capture_output=True, text=True)
+			sender['body'] = userData.stdout
+			endpoint = 'messages/text'
 		elif command_input.startswith("pengguna"):
 			userList = subprocess.run(['bot-check-user'], capture_output=True, text=True)
 			sender['body'] = userList.stdout
 			endpoint = 'messages/text'
 		elif command_input.startswith("s1 restart"):
 			subprocess.run(['reboot'])
-		elif command_input.startswith("s2 restart"):
-			sshServer2 = spur.SshShell(hostname=os.getenv('IPS2'), username=os.getenv('USERS2'), password=os.getenv('PASSS2'))
-			sshServer2.run(["reboot"])
 
 		if endpoint is None:
 			return 'Ok', 200
