@@ -27,9 +27,11 @@ xrayData () {
 userUsage() {
     local usageData="$1"
     local prefixData="$2"
-    local sortedData=$(echo "$usageData" | grep "^${prefixData}" | sort -r | awk '{ gsub("user:", "") ; print $0 }' | awk '{ gsub("->downlink", "") ; print $0 }' | awk '{ gsub("->uplink", "") ; print $0 }' | awk '{ gsub("\t", " ") ; print $0 }' | awk '{a[$1]=a[$1] FS $2} END{for(i in a) print i a[i]}' | numfmt --field=2 --suffix=B --to=iec | numfmt --field=3 --suffix=B --to=iec)
-
-    echo -e "\033[1;33mUser Upload Download\n\033[0m${sortedData}" | column -t
+    local sortedData=$(echo "$usageData" | grep "^${prefixData}" | sort -r | awk '{ gsub("user:", "") ; print $0 }' | awk '{ gsub("->downlink", "") ; print $0 }' | awk '{ gsub("->uplink", "") ; print $0 }' | awk '{ gsub("\t", " ") ; print $0 }' | awk '{a[$1]=a[$1] FS $2} END{for(i in a) print i a[i]}')
+    local totalData=$(echo "$sortedData" | awk '{up+=$2}{dl+=$3}END{printf "\033[1;33mTotal\t%.0f\t%.0f", up, dl;}')
+    local traficData=$(echo -e "${sortedData}\n${totalData}" | numfmt --field=2 --suffix=B --to=iec | numfmt --field=3 --suffix=B --to=iec)
+    
+    echo -e "\033[1;33mUser Upload Download\n\033[0m${traficData}" | column -t
 }
 
 usageData=$(xrayData $1)
